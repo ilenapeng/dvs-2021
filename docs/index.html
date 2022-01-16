@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Why We Visualize | SOTI 2021</title>
+    <link rel="shortcut icon" href="favicon.ico?" type="image/x-icon" />
+
+    <!-- bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+
+    <!-- legend -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <base target="_blank" />
+  </head>
+
+  <body>
+    <div class="container p-lg-3 p-sm-5">
+      <div class="row">
+        <div class="col-lg-3" style="margin: auto;">
+          <h2>Why We Visualize</h2>
+          <div style="text-align: justify;">
+            
+          <p>
+The top two reasons Data Visualization Society members pursued unpaid data visualization side projects were to <b>build skills</b> and for <b>enjoyment</b>, according to DVS’ 2021 State of the Industry Survey.
+          </p>
+
+          <p>
+Survey respondents were given five reasons and asked how strongly these five reasons motivated them to do unpaid side projects. The <b>color</b> of these triangles corresponds to those who answered Very True, True or Neutral, indicating that these reasons were a motivator for them in some capacity, and the <b>size</b> of each triangle corresponds to how many people answered as such.     
+           </p> 
+            <p>
+            Please note that visualized here is only the subset of 249 people who answered this portion of the survey.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="col-lg-9">
+          <div id="legend"></div>
+          <div id="chart"></div>
+        </div>
+        
+        <!-- credits -->
+        <div class="col-lg-3" style="font-size: 12px;">
+
+          <p>
+            Made by <a href="https://twitter.com/ilenapeng">Ilena Peng</a> for
+            <a href="https://www.datavisualizationsociety.org/soti-challenge-2021">DVS' SOTI Challenge</a>
+            <br />
+            Design inspired by Amy Cesal's gorgeous
+            <a
+              href="https://medium.com/nightingale/data-visualization-society-logo-behind-the-scenes-ea65d04bc344"
+              >DVS logo</a
+            >
+            <br />
+            All code is available on <a href="LINKTK">GitHub</a>
+          </p>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>
+
+<!--  JS STARTS HERE  -->
+
+<script>
+  // LEGEND
+  const svg_legend = d3
+    .select("#legend")
+    .append("svg")
+    .attr("viewBox", `0 0 600 80`);
+
+  var ordinal = d3
+    .scaleOrdinal()
+    .domain(["Very True", "True", "Neutral"])
+    .range(["rgb(221, 179, 43)", "rgb(160, 94, 156)", "rgb(45, 178, 165)"]);
+
+  // var svg = d3.select("svg");
+
+  svg_legend
+    .append("g")
+    .attr("class", "legendOrdinal")
+    .attr("transform", "translate(225,15)");
+
+  var legendOrdinal = d3
+    .legendColor()
+    .shape("path", d3.symbol().type(d3.symbolTriangle).size(150)())
+    .shapePadding(50)
+    .scale(ordinal)
+    .labelOffset(12)
+    .orient("horizontal");
+
+  svg_legend.select(".legendOrdinal").call(legendOrdinal);
+
+  /////////// CHART STARTS HERE
+  //  responsive
+  const svg = d3.select("#chart").append("svg").attr("viewBox", `0 0 600 330`);
+
+
+  //////////// SET UP TOOLTIPS
+    var Tooltip = d3.select("#chart")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border-width", "2px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+  
+    var mouseover_verytrue = function(d) {
+    Tooltip
+      .style("opacity", 1)
+    d3.select(this)
+      .style("stroke", "goldenrod")}
+    
+      var mouseover_true = function(d) {
+    Tooltip
+      .style("opacity", 1)
+    d3.select(this)
+      .style("stroke", "darkmagenta")}
+      
+      var mouseover_neutral = function(d) {
+    Tooltip
+      .style("opacity", 1)
+    d3.select(this)
+      .style("stroke", "darkcyan")}
+
+   var mouseleave = function(d) {
+    Tooltip
+      .style("opacity", 0)
+    d3.select(this)
+      .style("stroke", "none")
+  }
+   
+  /////////// ROW ONE STARTS HERE
+  //// BUILD SKILLS
+  // text
+  svg
+    .append("text")
+    .text("To Build Skills")
+    .attr("x", 100)
+    .attr("y", 15)
+    .style("text-anchor", "middle")
+    .style("font-size", "20px");
+
+  // triangles
+  svg
+    .append("path")
+    .attr("class", "verytrue")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(148 * 50)
+    )
+    .attr("transform", "translate(90,80)rotate(-49)")
+    .on("mouseover", mouseover_verytrue)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("148 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "true")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(71 * 50)
+    )
+    .attr("transform", "translate(120,75)rotate(28)")
+      .on("mouseover", mouseover_true)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("71 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "neutral")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(17 * 50)
+    )
+    .attr("transform", "translate(110,112)rotate(48)")
+    .on("mouseover", mouseover_neutral)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("17 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  //// ENJOYMENT
+  // text
+  svg
+    .append("text")
+    .text("For Enjoyment")
+    .attr("x", 300)
+    .attr("y", 15)
+    .style("text-anchor", "middle")
+    .style("font-size", "20px");
+
+  // triangles
+  svg
+    .append("path")
+    .attr("class", "verytrue")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(140 * 50)
+    )
+    .attr("transform", "translate(300,80)rotate(-65)")
+      .on("mouseover", mouseover_verytrue)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("140 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "true")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(85 * 50)
+    )
+    .attr("transform", "translate(300,89)rotate(100)")
+        .on("mouseover", mouseover_true)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("85 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "neutral")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(10 * 50)
+    )
+    .attr("transform", "translate(300,40)rotate(128)")
+      .on("mouseover", mouseover_neutral)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("10 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  //// SHARE MESSAGES
+  // text
+  svg
+    .append("text")
+    .text("To Share Messages")
+    .attr("x", 500)
+    .attr("y", 15)
+    .style("text-anchor", "middle")
+    .style("font-size", "20px");
+
+  // triangles
+  svg
+    .append("path")
+    .attr("class", "verytrue")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(52 * 50)
+    )
+    .attr("transform", "translate(520,102)rotate(-42)")
+      .on("mouseover", mouseover_verytrue)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("52 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "true")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(99 * 50)
+    )
+    .attr("transform", "translate(500,80)rotate(90)")
+        .on("mouseover", mouseover_true)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("99 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "neutral")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(62 * 50)
+    )
+    .attr("transform", "translate(500,80)rotate(50)")
+      .on("mouseover", mouseover_neutral)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("62 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  /////////// ROW TWO STARTS HERE
+  //// PORTFOLIO
+  // text
+  svg
+    .append("text")
+    .text("To Build a Portfolio")
+    .attr("x", 200)
+    .attr("y", 200)
+    .style("text-anchor", "middle")
+    .style("font-size", "20px");
+
+  // triangles
+  svg
+    .append("path")
+    .attr("class", "verytrue")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(89 * 50)
+    )
+    .attr("transform", "translate(200,260)rotate(32)")
+      .on("mouseover", mouseover_verytrue)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("89 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "true")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(82 * 50)
+    )
+    .attr("transform", "translate(200,250)rotate(73)")
+        .on("mouseover", mouseover_true)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("82 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "neutral")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(41 * 50)
+    )
+    .attr("transform", "translate(220,250)rotate(80)")
+      .on("mouseover", mouseover_neutral)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("41 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  //// VOLUNTEER
+  // text
+  svg
+    .append("text")
+    .text("To Volunteer")
+    .attr("x", 400)
+    .attr("y", 200)
+    .style("text-anchor", "middle")
+    .style("font-size", "20px");
+
+  // triangles
+  svg
+    .append("path")
+    .attr("class", "verytrue")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(29 * 50)
+    )
+    .attr("transform", "translate(380,255)rotate(30)")
+      .on("mouseover", mouseover_verytrue)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("29 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "true")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(66 * 50)
+    )
+    .attr("transform", "translate(400,257)rotate(97)")
+        .on("mouseover", mouseover_true)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("66 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+
+  svg
+    .append("path")
+    .attr("class", "neutral")
+    .attr(
+      "d",
+      d3
+        .symbol()
+        .type(d3.symbolTriangle)
+        .size(58 * 50)
+    )
+    .attr("transform", "translate(405,247)rotate(73)")
+      .on("mouseover", mouseover_neutral)
+    .on("mousemove", function(d) {
+    Tooltip
+      .html("58 people")
+      .style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px")
+  })
+    .on("mouseleave", mouseleave);
+</script>
